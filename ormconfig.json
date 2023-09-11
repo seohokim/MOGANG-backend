@@ -1,0 +1,11 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "post": "3000",
+  "username": "mogang",
+  "password": "root",
+  "database": "mogang",
+  "synchronize": true,
+  "logging": true,
+  "entities": ["dist/**/*.entity.{ts,js}"]
+}
