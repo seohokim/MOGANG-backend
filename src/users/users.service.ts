@@ -9,9 +9,9 @@ import { GetUserInputDto, GetUserOutputDto } from 'src/common/dtos/get-user.dto'
 export class UsersService {
   constructor(@InjectRepository(User) private readonly userRepository: Repository<User> ) {}
 
-  async createUser(CreateUserInputDto: CreateUserInputDto): Promise<CreateUserOutputDto> {
+  async createUser(createUserInputDto: CreateUserInputDto): Promise<CreateUserOutputDto> {
     try{
-      const {email, firstName, lastName, password, checkPassword }= CreateUserInputDto;
+      const { email, firstName, lastName, password, checkPassword } = createUserInputDto;
       const userExist = await this.userRepository.findOne({ where: { email }});
 
       if (userExist) return { ok: false, error: "Already exist." };
@@ -24,7 +24,7 @@ export class UsersService {
       return { ok: false, error: 'Something went wrong. Try again.'};
     }
   }
-  
+
   async findOneUser(getUserInputDto: GetUserInputDto): Promise<GetUserOutputDto> {
     try {
       const { email } = getUserInputDto;

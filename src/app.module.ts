@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
+import { LecturesController } from './lectures/lectures.controller';
+import { LecturesModule } from './lectures/lectures.module';
 
 
 @Module({
@@ -21,10 +23,13 @@ import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
         JWT_ACCESS_TOKEN_SECRET_KEY: Joi.string().required(),
         JWT_REFRESH_TOKEN_SECRET_KEY: Joi.string().required(),
         JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
-        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required()
+        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_SECRET: Joi.string().required()
       })
     }),
-    AuthModule],
+    AuthModule,
+    LecturesModule],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
 })
