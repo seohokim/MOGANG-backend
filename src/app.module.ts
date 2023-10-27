@@ -12,6 +12,9 @@ import * as Joi from 'joi';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { LecturesController } from './lectures/lectures.controller';
 import { LecturesModule } from './lectures/lectures.module';
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardService } from './dashboard/dashboard.service';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 
 @Module({
@@ -29,7 +32,8 @@ import { LecturesModule } from './lectures/lectures.module';
       })
     }),
     AuthModule,
-    LecturesModule],
+    LecturesModule,
+    DashboardModule],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
 })

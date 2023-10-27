@@ -18,6 +18,7 @@ export class Lecture extends Core {
   @IsString()
   author?: string;
 
+
   @Column({ type: 'enum', enum: Provider, default: Provider.Inflearn })
   provider: Provider;
 
@@ -35,7 +36,7 @@ export class Lecture extends Core {
 
   @Column()
   @IsString()
-  photo: string;
+  thumnailUrl: string;
 
   @Column()
   @IsOptional()

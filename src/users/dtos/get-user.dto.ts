@@ -1,5 +1,5 @@
 import { PickType } from "@nestjs/mapped-types";
-import { CoreOutPut } from "./core.dto";
+import { CoreOutPut } from "src/common/dtos/core.dto";
 import { IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 

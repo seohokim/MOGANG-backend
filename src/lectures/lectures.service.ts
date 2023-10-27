@@ -12,10 +12,10 @@ export class LecturesService {
   
   async createLecture(createLectureInputDto: CreateLectureInputDto): Promise<CreateLectureOutputDto> {
     try{
-      const { title, author,provider, htmlContent, photo, score, url } = createLectureInputDto;
+      const { title, author,provider, htmlContent, thumnailUrl, score, url } = createLectureInputDto;
       const lectureExist = await this.lectureRepository.findOne({ where: { url }})
       if (lectureExist) return {ok: false, error: "Already exist." };
-      const lecture = this.lectureRepository.create({ title, author,provider, htmlContent, photo, score, url });
+      const lecture = this.lectureRepository.create({ title, author, provider, htmlContent, thumnailUrl, score, url });
       await this.lectureRepository.save(lecture);
       return { ok: true };
     } catch (error) {

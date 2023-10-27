@@ -1,6 +1,14 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
-export class CoreOutPut{
+export class CoreOutPut {
   @IsBoolean()
   @IsNotEmpty()
   ok: boolean;
@@ -8,4 +16,14 @@ export class CoreOutPut{
   @IsString()
   @IsOptional()
   error?: string;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @IsOptional()
+  message?: string[];
+
+  @IsNumber()
+  @IsNotEmpty()
+  statusCode: number;
 }
