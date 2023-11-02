@@ -45,7 +45,8 @@ export class AuthService {
           statusCode: 401,
         };
       }
-      return { ok: true, message: [user.toString()], statusCode: 200 };
+
+      return { ok: true, user, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,
@@ -61,13 +62,13 @@ export class AuthService {
     loginAuthInputDto: LoginAuthInputDto,
   ): Promise<LoginAuthOutputDto> {
     try {
-      const { ok, error, user } = loginAuthInputDto;
+      const { ok, message, error, user, statusCode } = loginAuthInputDto;
       if (ok === false)
         return {
-          ok: false,
-          message: [error],
-          error: 'Unauthorized',
-          statusCode: 401,
+          ok,
+          message,
+          error,
+          statusCode,
         };
       if (!user)
         return {
@@ -100,7 +101,6 @@ export class AuthService {
         statusCode: 200,
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         message: ['server-Error'],
@@ -192,7 +192,6 @@ export class AuthService {
         statusCode: 200,
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         message: ['bad-request'],

@@ -18,9 +18,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   ): Promise<ValidateAuthOutputDto> {
     try {
       const result = await this.authService.validateUser({ email, password });
-      const { ok, error } = result;
+      const { ok, message, error, statusCode } = result;
       let { user } = result;
-      if (ok === false) return { ok: false, message: [error], statusCode: 500 };
+      if (ok === false) return { ok: false, message, error, statusCode };
       if (!user) {
         return {
           ok: false,
@@ -31,10 +31,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       }
       const plainUser = user.toJSON();
       user = plainToClass(User, plainUser);
-      //console.log(user);
       return { ok: true, user, statusCode: 200 };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         message: ['server-error'],

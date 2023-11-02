@@ -1,19 +1,22 @@
 import { PickType } from '@nestjs/mapped-types';
 import { CoreOutPut } from 'src/common/dtos/core.dto';
 import { Lecture } from '../entities/lecture.entity';
+import { IsOptional } from 'class-validator';
 
 export class CreateLectureInputDto extends PickType(Lecture, [
   'title',
   'author',
   'skills',
   'level',
-  'charge',
+  'price',
   'score',
   'provider',
-  'htmlContent',
-  'thumnailUrl',
+  'thumbnailUrl',
   'score',
   'url',
 ]) {}
 
-export class CreateLectureOutputDto extends CoreOutPut {}
+export class CreateLectureOutputDto extends CoreOutPut {
+  @IsOptional()
+  lecture?: Lecture;
+}

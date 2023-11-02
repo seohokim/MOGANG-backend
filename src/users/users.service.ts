@@ -42,6 +42,7 @@ export class UsersService {
         firstName,
         lastName,
         password,
+        provider: 0,
       });
       await this.userRepository.save(user);
       return { ok: true, statusCode: 200 };
@@ -68,7 +69,7 @@ export class UsersService {
           error: "Can't find user.",
           statusCode: 500,
         };
-      return { ok: true, statusCode: 200 };
+      return { ok: true, user, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,

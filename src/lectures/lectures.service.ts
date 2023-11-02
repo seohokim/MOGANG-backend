@@ -6,6 +6,10 @@ import {
   CreateLectureInputDto,
   CreateLectureOutputDto,
 } from './dto/create-lecture.dto';
+import {
+  LoadLecturesInputDto,
+  LoadLecturesOutputDto,
+} from './dto/load-lectures.dto';
 
 @Injectable()
 export class LecturesService {
@@ -23,10 +27,9 @@ export class LecturesService {
         author,
         skills,
         level,
-        charge,
+        price,
         provider,
-        htmlContent,
-        thumnailUrl,
+        thumbnailUrl,
         score,
         url,
       } = createLectureInputDto;
@@ -43,16 +46,17 @@ export class LecturesService {
       const lecture = this.lectureRepository.create({
         title,
         author,
+        skills,
+        level,
+        price,
         provider,
-        htmlContent,
-        thumnailUrl,
+        thumbnailUrl,
         score,
         url,
       });
       await this.lectureRepository.save(lecture);
-      return { ok: true, statusCode: 200 };
+      return { ok: true, lecture, statusCode: 200 };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         message: ['server-error'],
@@ -62,5 +66,7 @@ export class LecturesService {
     }
   }
 
-  async loadLectures() {}
+  async loadLectureList(
+    filter: LoadLecturesInputDto,
+  ): Promise<LoadLecturesOutputDto> {}
 }

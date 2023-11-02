@@ -6,7 +6,7 @@ import {
   IsUrl,
 } from 'class-validator';
 import { Core } from 'src/common/entities/core.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity } from 'typeorm';
 
 export enum Provider {
   Inflearn = 0,
@@ -15,6 +15,9 @@ export enum Provider {
 
 @Entity()
 export class Lecture extends Core {
+  @Column({ type: 'enum', enum: Provider, default: Provider.Inflearn })
+  provider: Provider;
+
   @Column()
   @IsString()
   title: string;
@@ -24,10 +27,10 @@ export class Lecture extends Core {
   @IsString()
   author?: string;
 
-  @Column()
+  @Column('simple-array')
   @IsArray()
   @IsString({ each: true })
-  skills: string;
+  skills: string[];
 
   @Column()
   @IsNumber()
@@ -35,45 +38,35 @@ export class Lecture extends Core {
 
   @Column()
   @IsNumber()
-  charge: number;
+  price: number;
 
-  @Column({ type: 'enum', enum: Provider, default: Provider.Inflearn })
-  provider: Provider;
+  @Column({ type: 'int', nullable: true })
+  @IsNumber()
+  durationInMinutes: number;
 
-  @Column({ type: 'text', nullable: true })
-  @IsString()
-  htmlContent: string;
-
-  @Column()
+  @Column('double precision')
   @IsNumber()
   score: number;
 
-  @Column()
+  @Column({ default: 0 })
   @IsNumber()
-  views: number; //서비스 내부
+  views: number;
 
   @Column()
-  @IsString()
-  thumnailUrl: string;
+  @IsUrl()
+  thumbnailUrl: string;
 
-  @Column()
-  @IsOptional()
+  @Column({ default: 0 })
   @IsNumber()
-  like: number; //서비스 내부
+  like: number;
 
   @Column({ unique: true })
   @IsString()
   @IsUrl()
   url: string;
 
-  // @OneToMany(() => Review, review => review.lecture)
-  // reviews: Review[];
-
-  // @OneToMany(() => Post, post => post.lecture)
-  // posts: Post[];
-
   @BeforeInsert()
-  private async likeAndViews() {
+  private likeAndViews() {
     this.like = 0;
     this.views = 0;
   }

@@ -24,6 +24,7 @@ export class BannerService {
           statusCode: 404,
         };
       }
+      return { ok: true, banner, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,
@@ -39,13 +40,15 @@ export class BannerService {
       const banner = await this.bannerRepository.findOne({
         where: { id },
       });
-      if (!banner)
+      if (!banner) {
         return {
           ok: false,
           message: ['banner-not-found'],
           error: 'Not Found',
           statusCode: 404,
         };
+      }
+      return { ok: true, banner, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,
