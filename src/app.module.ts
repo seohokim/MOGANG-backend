@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -12,14 +11,13 @@ import * as Joi from 'joi';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { LecturesController } from './lectures/lectures.controller';
 import { LecturesModule } from './lectures/lectures.module';
-import { DashboardController } from './dashboard/dashboard.controller';
-import { DashboardService } from './dashboard/dashboard.service';
-import { DashboardModule } from './dashboard/dashboard.module';
-
+import { BannerController } from './banner/banner.controller';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
-  imports: [CommonModule, 
-    UsersModule, 
+  imports: [
+    CommonModule,
+    UsersModule,
     TypeOrmModule.forRoot(typeORMConfig),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -28,14 +26,14 @@ import { DashboardModule } from './dashboard/dashboard.module';
         JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         GOOGLE_CLIENT_ID: Joi.string().required(),
-        GOOGLE_SECRET: Joi.string().required()
-      })
+        GOOGLE_SECRET: Joi.string().required(),
+      }),
     }),
     AuthModule,
     LecturesModule,
-    DashboardModule],
-  controllers: [AppController],
+    BannerModule,
+  ],
+  controllers: [AppController, BannerController],
   providers: [AppService, JwtStrategy],
 })
-
 export class AppModule {}

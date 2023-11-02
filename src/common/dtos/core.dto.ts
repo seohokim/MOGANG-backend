@@ -24,6 +24,5 @@ export class CoreOutPut {
   message?: string[];
 
   @IsNumber()
-  @IsNotEmpty()
   statusCode: number;
 }

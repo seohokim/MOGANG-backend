@@ -30,11 +30,11 @@ export class UsersService {
           statusCode: 409,
         };
       if (password !== checkPassword)
-        return { 
-          ok: false, 
-          message: [],
-          error: 'Password does not match.',
-          statusCode: 
+        return {
+          ok: false,
+          message: ['password-not-match'],
+          error: 'Unauthorized',
+          statusCode: 401,
         };
 
       const user = this.userRepository.create({
@@ -44,10 +44,14 @@ export class UsersService {
         password,
       });
       await this.userRepository.save(user);
-      return { ok: true,
-        statusCode: 200 };
+      return { ok: true, statusCode: 200 };
     } catch (error) {
-      return { ok: false, error: 'Something went wrong. Try again.' };
+      return {
+        ok: false,
+        message: ['server-error'],
+        error: 'Internal Server Error',
+        statusCode: 500,
+      };
     }
   }
 
@@ -57,10 +61,21 @@ export class UsersService {
     try {
       const { email } = getUserInputDto;
       const user = await this.userRepository.findOne({ where: { email } });
-      if (!user) return { ok: false, error: "Can't find user." };
-      return { ok: true, user };
+      if (!user)
+        return {
+          ok: false,
+          message: ['user-not-found'],
+          error: "Can't find user.",
+          statusCode: 500,
+        };
+      return { ok: true, statusCode: 200 };
     } catch (error) {
-      return { ok: false, error: "Can't find user." };
+      return {
+        ok: false,
+        message: ['server-error'],
+        error: 'Internal Server Error',
+        statusCode: 500,
+      };
     }
   }
 }

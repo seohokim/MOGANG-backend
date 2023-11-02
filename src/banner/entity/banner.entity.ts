@@ -1,12 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Core } from 'src/common/entities/core.entity';
-import { IsUrl } from 'class-validator';
+import { IsOptional, IsUrl } from 'class-validator';
 @Entity()
 export class Banner extends Core {
+  @Column()
   @IsUrl()
-  @Column({ type: 'text' })
   imageUrl: string;
 
-  @Column({ type: 'text' })
-  link: string;
+  @Column()
+  @IsUrl()
+  @IsOptional()
+  link?: string;
 }
