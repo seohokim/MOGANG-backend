@@ -102,11 +102,13 @@ export class LecturesService {
           { title: `%${formattedTitle}%` },
         );
       }
-      if (skills && skills.length > 0) {
-        queryBuilder.andWhere('lecture.skills && :skills', {
-          skills,
-        });
+      if (skills.length > 0) {
+        queryBuilder.andWhere(
+          `string_to_array(lecture.skills, ',') && :skills`,
+          { skills: skills },
+        );
       }
+
       if (price) {
         queryBuilder.andWhere('lecture.price < :price', {
           price,
@@ -133,6 +135,14 @@ export class LecturesService {
         };
       }
       const lectures = await queryBuilder.getMany();
+      if (lectures.length === 0) {
+        return {
+          ok: false,
+          message: ['not-found'],
+          error: 'Not Found',
+          statusCode: 404,
+        };
+      }
       return { ok: true, lectures, statusCode: 200 };
     } catch (error) {
       return {
