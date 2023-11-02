@@ -3,7 +3,7 @@ import { Lecture } from '../entities/lecture.entity';
 import { CoreOutPut } from 'src/common/dtos/core.dto';
 import { IsArray, IsIn, IsOptional } from 'class-validator';
 
-export class LoadLecturesInputDto extends PickType(Lecture, [
+export class LoadLecturesListInputDto extends PickType(Lecture, [
   'title',
   'skills',
   'price',
@@ -13,8 +13,15 @@ export class LoadLecturesInputDto extends PickType(Lecture, [
   order?: 'score' | 'createdAt' | 'price';
 }
 
-export class LoadLecturesOutputDto extends CoreOutPut {
+export class LoadLecturesListOutputDto extends CoreOutPut {
   @IsOptional()
   @IsArray()
   lectures?: Lecture[];
+}
+
+export class LoadLectureInputDto extends PickType(Lecture, ['id']) {}
+
+export class LoadLectureOutputDto extends CoreOutPut {
+  @IsOptional()
+  lecture?: Lecture;
 }

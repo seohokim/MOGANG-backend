@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { LecturesService } from './lectures.service';
 import {
   CreateLectureInputDto,
   CreateLectureOutputDto,
 } from './dto/create-lecture.dto';
 import {
-  LoadLecturesInputDto,
-  LoadLecturesOutputDto,
+  LoadLectureInputDto,
+  LoadLectureOutputDto,
+  LoadLecturesListInputDto,
+  LoadLecturesListOutputDto,
 } from './dto/load-lectures.dto';
 
 @Controller('lectures')
@@ -23,13 +25,25 @@ export class LecturesController {
     );
     return res.status(result.statusCode).json(result);
   }
+
   @Get() //find lectures
   async loadLectureList(
     @Res() res,
-    loadLecturesInputDto: LoadLecturesInputDto,
-  ): Promise<LoadLecturesOutputDto> {
+    loadLecturesListInputDto: LoadLecturesListInputDto,
+  ): Promise<LoadLecturesListOutputDto> {
+    const result = await this.lectureService.loadLectureList(
+      loadLecturesListInputDto,
+    );
+    return res.status(result.statusCode).json(result);
+  }
+
+  @Get()
+  async loadLecture(
+    @Res() res,
+    loadLectureInputDto: LoadLectureInputDto,
+  ): Promise<LoadLectureOutputDto> {
     const result =
-      await this.lectureService.loadLectureList(loadLecturesInputDto);
+      await this.lectureService.loadLectureById(loadLectureInputDto);
     return res.status(result.statusCode).json(result);
   }
 }

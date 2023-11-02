@@ -7,8 +7,10 @@ import {
   CreateLectureOutputDto,
 } from './dto/create-lecture.dto';
 import {
-  LoadLecturesInputDto,
-  LoadLecturesOutputDto,
+  LoadLectureInputDto,
+  LoadLectureOutputDto,
+  LoadLecturesListInputDto,
+  LoadLecturesListOutputDto,
 } from './dto/load-lectures.dto';
 
 @Injectable()
@@ -66,9 +68,29 @@ export class LecturesService {
     }
   }
 
+  async loadLectureById(
+    loadLectureInputDto: LoadLectureInputDto,
+  ): Promise<LoadLectureOutputDto> {
+    try {
+      const { id } = loadLectureInputDto;
+      const lecture = await this.lectureRepository.findOne({ where: { id } });
+      if (!lecture) {
+        return {
+          ok: false,
+          message: ['not-found'],
+          error: 'Not Found',
+          statusCode: 404,
+        };
+      }
+      return { ok: true, lecture, statusCode: 200 };
+    } catch (error) {
+      return { ok: false, message: ['server-error'], error, statusCode: 500 };
+    }
+  }
+
   async loadLectureList(
-    filter: LoadLecturesInputDto,
-  ): Promise<LoadLecturesOutputDto> {
+    filter: LoadLecturesListInputDto,
+  ): Promise<LoadLecturesListOutputDto> {
     try {
       const { title, skills, price, order } = filter;
       const queryBuilder = this.lectureRepository.createQueryBuilder('lecture');
@@ -78,10 +100,14 @@ export class LecturesService {
         });
       }
       if (skills && skills.length > 0) {
-        queryBuilder.andWhere('lecture.skills && :skills', { skills });
+        queryBuilder.andWhere('lecture.skills && :skills', {
+          skills,
+        });
       }
       if (price) {
-        queryBuilder.andWhere('lecture.price < :price', { price });
+        queryBuilder.andWhere('lecture.price < :price', {
+          price,
+        });
       }
       if (order) {
         switch (order) {
@@ -95,13 +121,20 @@ export class LecturesService {
             queryBuilder.orderBy(`lecture.${order}`, 'ASC');
             break;
         }
+      } else {
+        return {
+          ok: false,
+          message: ['order-not-found'],
+          error: 'Not Found',
+          statusCode: 404,
+        };
       }
       const lectures = await queryBuilder.getMany();
       return { ok: true, lectures, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,
-        message: ['server-error'],
+        message: [error],
         error: 'Internal Server Error',
         statusCode: 500,
       };
