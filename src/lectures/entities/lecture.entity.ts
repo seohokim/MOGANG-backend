@@ -6,7 +6,8 @@ import {
   IsUrl,
 } from 'class-validator';
 import { Core } from 'src/common/entities/core.entity';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
 export enum Provider {
   Inflearn = 0,
@@ -56,9 +57,9 @@ export class Lecture extends Core {
   @IsUrl()
   thumbnailUrl: string;
 
-  @Column({ default: 0 })
-  @IsNumber()
-  like: number;
+  @ManyToMany(() => User, (user) => user.likedLectures, { cascade: true })
+  @JoinTable()
+  likedByUsers: User[];
 
   @Column({ unique: true })
   @IsString()
@@ -67,7 +68,6 @@ export class Lecture extends Core {
 
   @BeforeInsert()
   private likeAndViews() {
-    this.like = 0;
     this.views = 0;
   }
 }

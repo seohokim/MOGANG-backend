@@ -6,8 +6,7 @@ import { IsArray, IsIn, IsOptional } from 'class-validator';
 export class LoadLecturesListInputDto extends PartialType(
   PickType(Lecture, ['title', 'skills', 'price']),
 ) {
-  @IsOptional()
-  @IsIn(['score', 'createdAt', 'price'])
+  @IsIn(['score', 'createdAt', 'price'], { message: 'order-not-found' })
   order?: 'score' | 'createdAt' | 'price';
 }
 

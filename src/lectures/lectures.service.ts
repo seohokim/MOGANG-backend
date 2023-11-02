@@ -12,12 +12,16 @@ import {
   LoadLecturesListInputDto,
   LoadLecturesListOutputDto,
 } from './dto/load-lectures.dto';
+import { LikeInputDto, LikeOutputDto } from './dto/like-lecture.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class LecturesService {
   constructor(
     @InjectRepository(Lecture)
     private readonly lectureRepository: Repository<Lecture>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async createLecture(
@@ -73,7 +77,10 @@ export class LecturesService {
   ): Promise<LoadLectureOutputDto> {
     try {
       const { id } = loadLectureInputDto;
-      const lecture = await this.lectureRepository.findOne({ where: { id } });
+      const lecture = await this.lectureRepository.findOne({
+        where: { id },
+        relations: ['likedByUsers'],
+      });
       if (!lecture) {
         return {
           ok: false,
@@ -82,6 +89,12 @@ export class LecturesService {
           statusCode: 404,
         };
       }
+      const likeCount = lecture.likedByUsers.length;
+      delete lecture.likedByUsers;
+      Object.assign(lecture, {
+        ...lecture,
+        like: likeCount,
+      });
       return { ok: true, lecture, statusCode: 200 };
     } catch (error) {
       console.log(error);
@@ -94,7 +107,9 @@ export class LecturesService {
   ): Promise<LoadLecturesListOutputDto> {
     try {
       const { title, skills, price, order } = filter;
-      const queryBuilder = this.lectureRepository.createQueryBuilder('lecture');
+      const queryBuilder = this.lectureRepository
+        .createQueryBuilder('lecture')
+        .loadRelationCountAndMap('lecture.likes', 'lecture.likedByUsers');
       if (title) {
         const formattedTitle = title.replace(/\s+/g, ''); // 사용자 입력에서 공백 제거
         queryBuilder.andWhere(
@@ -102,7 +117,7 @@ export class LecturesService {
           { title: `%${formattedTitle}%` },
         );
       }
-      if (skills.length > 0) {
+      if (skills && skills.length > 0) {
         queryBuilder.andWhere(
           `string_to_array(lecture.skills, ',') && :skills`,
           { skills: skills },
@@ -147,7 +162,84 @@ export class LecturesService {
     } catch (error) {
       return {
         ok: false,
-        message: [error],
+        message: [error.toString()],
+        error: 'Internal Server Error',
+        statusCode: 500,
+      };
+    }
+  }
+
+  async likeLecture(
+    reqBody: any,
+    likeInputDto: LikeInputDto,
+  ): Promise<LikeOutputDto> {
+    try {
+      const userId = reqBody.id;
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['likedLectures'],
+      });
+
+      const { lectureId } = likeInputDto;
+      const lecture = await this.lectureRepository.findOne({
+        where: { id: lectureId },
+        relations: ['likedByUsers'],
+      });
+
+      if (!user) {
+        return {
+          ok: false,
+          message: ['user-not-found'],
+          error: 'Unauthorized',
+          statusCode: 401,
+        };
+      }
+
+      if (!lecture) {
+        return {
+          ok: false,
+          message: ['lecture-not-found'],
+          error: 'Not Found',
+          statusCode: 404,
+        };
+      }
+
+      // Check if user has already liked the lecture
+      const idx = user.likedLectures.findIndex(
+        (likedLecture) => likedLecture.id === lectureId,
+      );
+
+      if (idx > -1) {
+        // User has already liked the lecture. Remove like.
+        user.likedLectures.splice(idx, 1);
+        const lectureIdx = lecture.likedByUsers.findIndex(
+          (likedUser) => likedUser.id === userId,
+        );
+        lecture.likedByUsers.splice(lectureIdx, 1);
+        await this.userRepository.save(user);
+        await this.lectureRepository.save(lecture);
+        return {
+          ok: true,
+          message: ['like-eliminated'],
+          statusCode: 200,
+        };
+      } else {
+        // User hasn't liked the lecture. Add like.
+        user.likedLectures.push(lecture);
+        lecture.likedByUsers.push(user);
+      }
+
+      await this.userRepository.save(user);
+      await this.lectureRepository.save(lecture);
+
+      return {
+        ok: true,
+        statusCode: 200,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        message: [error.toString()],
         error: 'Internal Server Error',
         statusCode: 500,
       };

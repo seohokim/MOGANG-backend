@@ -1,9 +1,19 @@
 import * as bcrypt from 'bcrypt';
 import { classToPlain, Exclude } from 'class-transformer';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 
 import { Core } from 'src/common/entities/core.entity';
+import { Lecture } from 'src/lectures/entities/lecture.entity';
 
 export enum Provider {
   Local,
@@ -34,6 +44,9 @@ export class User extends Core {
   @IsOptional()
   @IsString()
   password?: string;
+
+  @ManyToMany(() => Lecture, (lecture) => lecture.likedByUsers)
+  likedLectures: Lecture[];
 
   @Column({ type: 'enum', enum: Provider, default: Provider.Local })
   provider: Provider;
