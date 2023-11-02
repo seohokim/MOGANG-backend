@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Banner } from './entity/banner.entity';
 import { Repository } from 'typeorm';
-import { GetBannerOutputDto } from './dto/get-banner.dto';
+import { GetBannerInputDto, GetBannerOutputDto } from './dto/get-banner.dto';
 
 @Injectable()
 export class BannerService {
@@ -19,7 +19,7 @@ export class BannerService {
       if (!banner) {
         return {
           ok: false,
-          message: ['banner-not-found'],
+          message: ['not-found'],
           error: 'Not Found',
           statusCode: 404,
         };
@@ -35,20 +35,27 @@ export class BannerService {
     }
   }
 
-  async getBannerById(id: number): Promise<GetBannerOutputDto> {
+  async getBannerById(
+    getBannerInputDto: GetBannerInputDto,
+  ): Promise<GetBannerOutputDto> {
     try {
-      const banner = await this.bannerRepository.findOne({
-        where: { id },
-      });
-      if (!banner) {
-        return {
-          ok: false,
-          message: ['banner-not-found'],
-          error: 'Not Found',
-          statusCode: 404,
-        };
+      const { id } = getBannerInputDto;
+      if (id === 0) {
+        return this.getLatestBanner();
+      } else {
+        const banner = await this.bannerRepository.findOne({
+          where: { id },
+        });
+        if (!banner) {
+          return {
+            ok: false,
+            message: ['not-found'],
+            error: 'Not Found',
+            statusCode: 404,
+          };
+        }
+        return { ok: true, banner, statusCode: 200 };
       }
-      return { ok: true, banner, statusCode: 200 };
     } catch (error) {
       return {
         ok: false,

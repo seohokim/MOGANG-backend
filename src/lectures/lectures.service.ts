@@ -84,6 +84,7 @@ export class LecturesService {
       }
       return { ok: true, lecture, statusCode: 200 };
     } catch (error) {
+      console.log(error);
       return { ok: false, message: ['server-error'], error, statusCode: 500 };
     }
   }
@@ -95,9 +96,11 @@ export class LecturesService {
       const { title, skills, price, order } = filter;
       const queryBuilder = this.lectureRepository.createQueryBuilder('lecture');
       if (title) {
-        queryBuilder.andWhere('lecture.title LIKE: title', {
-          title: `${title}`,
-        });
+        const formattedTitle = title.replace(/\s+/g, ''); // 사용자 입력에서 공백 제거
+        queryBuilder.andWhere(
+          "regexp_replace(lecture.title, '\\s', '', 'g') LIKE :title",
+          { title: `%${formattedTitle}%` },
+        );
       }
       if (skills && skills.length > 0) {
         queryBuilder.andWhere('lecture.skills && :skills', {

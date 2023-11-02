@@ -1,6 +1,6 @@
-import { Controller, Get, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { BannerService } from './banner.service';
-import { GetBannerOutputDto } from './dto/get-banner.dto';
+import { GetBannerInputDto, GetBannerOutputDto } from './dto/get-banner.dto';
 
 @Controller('banner')
 export class BannerController {
@@ -9,10 +9,10 @@ export class BannerController {
   @Get()
   async getBanner(
     @Res() res,
-    @Query('id') id?: number,
+    @Body() getBannerInputDto: GetBannerInputDto,
   ): Promise<GetBannerOutputDto> {
-    if (id) {
-      const result = await this.bannerService.getBannerById(id);
+    if (getBannerInputDto) {
+      const result = await this.bannerService.getBannerById(getBannerInputDto);
       return res.status(result.statusCode).json(result);
     } else {
       const result = await this.bannerService.getLatestBanner();

@@ -29,7 +29,7 @@ export class LecturesController {
   @Get() //find lectures
   async loadLectureList(
     @Res() res,
-    loadLecturesListInputDto: LoadLecturesListInputDto,
+    @Body() loadLecturesListInputDto: LoadLecturesListInputDto,
   ): Promise<LoadLecturesListOutputDto> {
     const result = await this.lectureService.loadLectureList(
       loadLecturesListInputDto,
@@ -37,10 +37,10 @@ export class LecturesController {
     return res.status(result.statusCode).json(result);
   }
 
-  @Get()
+  @Get(':id')
   async loadLecture(
     @Res() res,
-    loadLectureInputDto: LoadLectureInputDto,
+    @Body() loadLectureInputDto: LoadLectureInputDto,
   ): Promise<LoadLectureOutputDto> {
     const result =
       await this.lectureService.loadLectureById(loadLectureInputDto);
