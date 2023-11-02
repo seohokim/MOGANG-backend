@@ -1,13 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import { Lecture } from '../entities/lecture.entity';
 import { CoreOutPut } from 'src/common/dtos/core.dto';
-import { IsArray, IsOptional } from 'class-validator';
-
-export enum Order {
-  score = 0,
-  createdAt = 1,
-  price = 2,
-}
+import { IsArray, IsIn, IsOptional } from 'class-validator';
 
 export class LoadLecturesInputDto extends PickType(Lecture, [
   'title',
@@ -15,11 +9,12 @@ export class LoadLecturesInputDto extends PickType(Lecture, [
   'price',
 ]) {
   @IsOptional()
-  order?: Order;
+  @IsIn(['score', 'createdAt', 'price'])
+  order?: 'score' | 'createdAt' | 'price';
 }
 
 export class LoadLecturesOutputDto extends CoreOutPut {
   @IsOptional()
   @IsArray()
-  lecture?: Lecture[];
+  lectures?: Lecture[];
 }

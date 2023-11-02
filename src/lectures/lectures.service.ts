@@ -68,5 +68,43 @@ export class LecturesService {
 
   async loadLectureList(
     filter: LoadLecturesInputDto,
-  ): Promise<LoadLecturesOutputDto> {}
+  ): Promise<LoadLecturesOutputDto> {
+    try {
+      const { title, skills, price, order } = filter;
+      const queryBuilder = this.lectureRepository.createQueryBuilder('lecture');
+      if (title) {
+        queryBuilder.andWhere('lecture.title LIKE: title', {
+          title: `${title}`,
+        });
+      }
+      if (skills && skills.length > 0) {
+        queryBuilder.andWhere('lecture.skills && :skills', { skills });
+      }
+      if (price) {
+        queryBuilder.andWhere('lecture.price < :price', { price });
+      }
+      if (order) {
+        switch (order) {
+          case 'score':
+            queryBuilder.orderBy(`lecture.${order}`, 'DESC');
+            break;
+          case 'createdAt':
+            queryBuilder.orderBy(`lecture.${order}`, 'DESC');
+            break;
+          case 'price':
+            queryBuilder.orderBy(`lecture.${order}`, 'ASC');
+            break;
+        }
+      }
+      const lectures = await queryBuilder.getMany();
+      return { ok: true, lectures, statusCode: 200 };
+    } catch (error) {
+      return {
+        ok: false,
+        message: ['server-error'],
+        error: 'Internal Server Error',
+        statusCode: 500,
+      };
+    }
+  }
 }
