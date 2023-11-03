@@ -33,6 +33,10 @@ export class Lecture extends Core {
   @IsString({ each: true })
   skills: string[];
 
+  @Column({ default: '' })
+  @IsString()
+  category: string;
+
   @Column()
   @IsNumber()
   level: number;
