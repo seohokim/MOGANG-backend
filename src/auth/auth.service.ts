@@ -210,7 +210,7 @@ export class AuthService {
       if (!getRefreshToken)
         return {
           ok: false,
-          message: ['cookie-not-found'],
+          message: ['refreshtoken-not-found'],
           error: 'Not Found',
           statusCode: 404,
         };

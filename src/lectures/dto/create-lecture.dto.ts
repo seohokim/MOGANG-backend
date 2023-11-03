@@ -14,6 +14,7 @@ export class CreateLectureInputDto extends PickType(Lecture, [
   'score',
   'provider',
   'thumbnailUrl',
+  'durationInMinutes',
   'score',
   'url',
 ]) {}
