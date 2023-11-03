@@ -1,9 +1,11 @@
 import {
   IsArray,
+  IsDate,
   IsNumber,
   IsOptional,
   IsString,
   IsUrl,
+  Matches,
 } from 'class-validator';
 import { Core } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -36,6 +38,10 @@ export class Lecture extends Core {
   @Column({ default: '' })
   @IsString()
   category: string;
+
+  @Column({ default: '2023/11' })
+  @Matches(/^\d{4}\/\d{2}$/)
+  lectureUpdatedAt: string;
 
   @Column()
   @IsNumber()

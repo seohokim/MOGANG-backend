@@ -20,13 +20,12 @@ import {
 } from './dto/load-lectures.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LikeInputDto, LikeOutputDto } from './dto/like-lecture.dto';
-import { request } from 'express';
 
 @Controller('lectures')
 export class LecturesController {
   constructor(private readonly lectureService: LecturesService) {}
 
-  @Post()
+  @Post() //Lecture 생성
   async createLecture(
     @Res() res,
     @Body() createLectureInputDto: CreateLectureInputDto,
@@ -48,7 +47,7 @@ export class LecturesController {
     return res.status(result.statusCode).json(result);
   }
 
-  @Get(':id')
+  @Get(':id') //id별로 lecture 불러오기
   async loadLecture(
     @Res() res,
     @Body() loadLectureInputDto: LoadLectureInputDto,
@@ -59,7 +58,7 @@ export class LecturesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(':id/like')
+  @Post(':id/like') //lecture id에 해당하는 좋아요 누르기(두 번 보내면 좋아요 삭제)
   async likeLecture(
     @Res() res,
     @Body() likeInputDto: LikeInputDto,

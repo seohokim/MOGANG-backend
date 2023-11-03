@@ -32,6 +32,8 @@ export class LecturesService {
         title,
         author,
         skills,
+        category,
+        lectureUpdatedAt,
         level,
         price,
         provider,
@@ -53,6 +55,8 @@ export class LecturesService {
         title,
         author,
         skills,
+        category,
+        lectureUpdatedAt,
         level,
         price,
         provider,
@@ -106,10 +110,21 @@ export class LecturesService {
     filter: LoadLecturesListInputDto,
   ): Promise<LoadLecturesListOutputDto> {
     try {
-      const { title, skills, price, order } = filter;
+      const { title, skills, category, price, order } = filter;
       const queryBuilder = this.lectureRepository
         .createQueryBuilder('lecture')
         .loadRelationCountAndMap('lecture.likes', 'lecture.likedByUsers');
+
+      if (category) {
+        queryBuilder.andWhere('lecture.category = :category', { category }); //lecutre의 category가 해당 category만 맞는 lecture만 선별
+      } else {
+        return {
+          ok: false,
+          message: ['category-not-found'],
+          error: 'Not Found',
+          statusCode: 400,
+        };
+      }
       if (title) {
         const formattedTitle = title.replace(/\s+/g, ''); // 사용자 입력에서 공백 제거
         queryBuilder.andWhere(
@@ -141,21 +156,13 @@ export class LecturesService {
             queryBuilder.orderBy(`lecture.${order}`, 'ASC');
             break;
         }
-      } else {
-        return {
-          ok: false,
-          message: ['order-not-found'],
-          error: 'Not Found',
-          statusCode: 404,
-        };
       }
       const lectures = await queryBuilder.getMany();
       if (lectures.length === 0) {
         return {
-          ok: false,
+          ok: true,
           message: ['not-found'],
-          error: 'Not Found',
-          statusCode: 404,
+          statusCode: 200,
         };
       }
       return { ok: true, lectures, statusCode: 200 };

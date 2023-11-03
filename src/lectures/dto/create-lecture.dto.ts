@@ -7,6 +7,8 @@ export class CreateLectureInputDto extends PickType(Lecture, [
   'title',
   'author',
   'skills',
+  'category',
+  'lectureUpdatedAt',
   'level',
   'price',
   'score',
