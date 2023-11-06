@@ -35,8 +35,11 @@ export class LecturesService {
         category,
         lectureUpdatedAt,
         level,
-        price,
+        originPrice,
+        currentPrice,
+        description,
         provider,
+        duration,
         thumbnailUrl,
         score,
         url,
@@ -58,8 +61,11 @@ export class LecturesService {
         category,
         lectureUpdatedAt,
         level,
-        price,
+        originPrice,
+        currentPrice,
         provider,
+        description,
+        duration,
         thumbnailUrl,
         score,
         url,
@@ -69,7 +75,7 @@ export class LecturesService {
     } catch (error) {
       return {
         ok: false,
-        message: ['server-error'],
+        message: [error.toString()],
         error: 'Internal Server Error',
         statusCode: 500,
       };
@@ -110,13 +116,16 @@ export class LecturesService {
     filter: LoadLecturesListInputDto,
   ): Promise<LoadLecturesListOutputDto> {
     try {
-      const { title, skills, category, price, order } = filter;
+      const { title, skills, category, currentPrice, order } = filter;
       const queryBuilder = this.lectureRepository
         .createQueryBuilder('lecture')
         .loadRelationCountAndMap('lecture.likes', 'lecture.likedByUsers');
 
       if (category) {
-        queryBuilder.andWhere('lecture.category = :category', { category }); //lecutre의 category가 해당 category만 맞는 lecture만 선별
+        queryBuilder.andWhere(
+          `string_to_array(lecture.category, ',') && :category`,
+          { category },
+        ); //lecutre의 category가 해당 category만 맞는 lecture만 선별
       } else {
         return {
           ok: false,
@@ -139,9 +148,9 @@ export class LecturesService {
         );
       }
 
-      if (price) {
+      if (currentPrice) {
         queryBuilder.andWhere('lecture.price < :price', {
-          price,
+          currentPrice,
         });
       }
       if (order) {
@@ -152,7 +161,7 @@ export class LecturesService {
           case 'createdAt':
             queryBuilder.orderBy(`lecture.${order}`, 'DESC');
             break;
-          case 'price':
+          case 'currentPrice':
             queryBuilder.orderBy(`lecture.${order}`, 'ASC');
             break;
         }

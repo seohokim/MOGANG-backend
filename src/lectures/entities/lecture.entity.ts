@@ -1,6 +1,5 @@
 import {
   IsArray,
-  IsDate,
   IsNumber,
   IsOptional,
   IsString,
@@ -11,15 +10,11 @@ import { Core } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
-export enum Provider {
-  Inflearn = 0,
-  Udemy = 1,
-}
-
 @Entity()
 export class Lecture extends Core {
-  @Column({ type: 'enum', enum: Provider, default: Provider.Inflearn })
-  provider: Provider;
+  @Column()
+  @IsString()
+  provider: string;
 
   @Column()
   @IsString()
@@ -35,25 +30,30 @@ export class Lecture extends Core {
   @IsString({ each: true })
   skills: string[];
 
-  @Column({ default: '' })
-  @IsString()
-  category: string;
+  @Column('simple-array')
+  @IsArray()
+  @IsString({ each: true })
+  category: string[];
 
   @Column({ default: '2023/11' })
-  @Matches(/^\d{4}\/\d{2}$/)
+  @Matches(/^\d{4}\/\d{2}$/) // 2023/11
   lectureUpdatedAt: string;
 
   @Column()
-  @IsNumber()
-  level: number;
+  @IsString()
+  level: string;
 
   @Column()
   @IsNumber()
-  price: number;
+  originPrice: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column()
   @IsNumber()
-  durationInMinutes: number;
+  currentPrice: string;
+
+  @Column({ nullable: true })
+  @Matches(/^(\d{1,4}):(\d{2})$/) //15:05 or 0:55
+  duration: string;
 
   @Column('double precision')
   @IsNumber()
@@ -64,12 +64,16 @@ export class Lecture extends Core {
   views: number;
 
   @Column()
-  @IsUrl()
-  thumbnailUrl: string;
+  @IsString()
+  description: string;
 
   @ManyToMany(() => User, (user) => user.likedLectures, { cascade: true })
   @JoinTable()
   likedByUsers: User[];
+
+  @Column()
+  @IsUrl()
+  thumbnailUrl: string;
 
   @Column({ unique: true })
   @IsString()
