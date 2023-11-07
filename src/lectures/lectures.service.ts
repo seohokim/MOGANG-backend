@@ -130,7 +130,7 @@ export class LecturesService {
         return {
           ok: false,
           message: ['category-not-found'],
-          error: 'Not Found',
+          error: 'Bad Request',
           statusCode: 400,
         };
       }
@@ -165,6 +165,13 @@ export class LecturesService {
             queryBuilder.orderBy(`lecture.${order}`, 'ASC');
             break;
         }
+      } else {
+        return {
+          ok: false,
+          message: ['order-not-found'],
+          error: 'Bad Request',
+          statusCode: 400,
+        };
       }
       const lectures = await queryBuilder.getMany();
       if (lectures.length === 0) {
