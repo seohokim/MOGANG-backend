@@ -45,11 +45,11 @@ export class Lecture extends Core {
 
   @Column()
   @IsNumber()
-  originPrice: string;
+  originPrice: number;
 
   @Column()
   @IsNumber()
-  currentPrice: string;
+  currentPrice: number;
 
   @Column({ nullable: true })
   @Matches(/^(\d{1,4}):(\d{2})$/) //15:05 or 0:55

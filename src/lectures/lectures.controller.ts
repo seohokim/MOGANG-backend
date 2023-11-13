@@ -36,12 +36,12 @@ export class LecturesController {
     return res.status(result.statusCode).json(result);
   }
 
-  @Get() //find lectures
+  @Get() //fillter로 lecture 불러오기
   async loadLectureList(
     @Res() res,
     @Body() loadLecturesListInputDto: LoadLecturesListInputDto,
   ): Promise<LoadLecturesListOutputDto> {
-    const result = await this.lectureService.loadLectureList(
+    const result = await this.lectureService.getLectureListByFilter(
       loadLecturesListInputDto,
     );
     return res.status(result.statusCode).json(result);
@@ -53,7 +53,7 @@ export class LecturesController {
     @Body() loadLectureInputDto: LoadLectureInputDto,
   ): Promise<LoadLectureOutputDto> {
     const result =
-      await this.lectureService.loadLectureById(loadLectureInputDto);
+      await this.lectureService.getLectureById(loadLectureInputDto);
     return res.status(result.statusCode).json(result);
   }
 

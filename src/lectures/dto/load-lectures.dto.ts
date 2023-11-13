@@ -21,5 +21,5 @@ export class LoadLectureInputDto extends PickType(Lecture, ['id']) {}
 
 export class LoadLectureOutputDto extends CoreOutPut {
   @IsOptional()
-  lecture?: Lecture;
+  lectures?: Lecture[];
 }
