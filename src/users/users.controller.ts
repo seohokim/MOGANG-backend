@@ -22,12 +22,7 @@ export class UsersController {
     @Body() createUserInputDto: CreateUserInputDto,
   ) {
     const result = await this.usersService.createUser(createUserInputDto);
-
-    if (result.ok) {
-      return res.status(200).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    return res.status(result.statusCode).json(result);
   }
 
   @UseGuards(JwtAuthGuard)
